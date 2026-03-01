@@ -1,0 +1,63 @@
+POST {{api_endpoint}}/api/checkpoints
+Accept: application/json
+Content-Type: application/json
+
+{
+  "courseId": "C1",
+  "athleteId": "A987",
+  "checkpointName": "CP2",
+  "timestamp": "2025-10-15T11:16:42Z",
+  "courseDistance": 10000
+}
+
+###
+
+POST {{api_endpoint}}/api/mockrace
+Accept: application/json
+Content-Type: application/json
+
+{
+  "courseId": "C-5K-1",
+  "raceConfig": "FIVE_KM",
+  "startTime": "2025-10-16T08:00:00Z",
+  "totalEntrants": 10
+}
+
+###
+
+POST {{api_endpoint}}/api/mockrace
+Accept: application/json
+Content-Type: application/json
+
+{
+  "courseId": "C-10K-1",
+  "raceConfig": "TEN_KM",
+  "startTime": "2025-10-16T08:00:00Z",
+  "totalEntrants": 10
+}
+
+###
+
+POST {{api_endpoint}}/api/mockrace
+Accept: application/json
+Content-Type: application/json
+
+{
+  "courseId": "C-HM-2",
+  "raceConfig": "HALF_MARATHON",
+  "startTime": "2025-10-16T08:00:00Z",
+  "totalEntrants": 10
+}
+
+###
+
+POST {{api_endpoint}}/api/mockrace
+Accept: application/json
+Content-Type: application/json
+
+{
+  "courseId": "C-MA-8",
+  "raceConfig": "MARATHON",
+  "startTime": "2025-10-16T12:00:00Z",
+  "totalEntrants": 10
+}

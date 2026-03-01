@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'wood.mike'
+version = '0.0.1-SNAPSHOT'
+description = 'sb-mini-kubelet'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'io.etcd:jetcd-core:0.8.6'
+    testImplementation 'io.etcd:jetcd-test:0.8.6'
+    compileOnly "org.projectlombok:lombok:1.18.42"
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    implementation 'com.github.docker-java:docker-java-core:3.7.0'
+    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.7.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootJar {
+    archiveFileName = 'app.jar'
+}

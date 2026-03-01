@@ -1,0 +1,12 @@
+server:
+  port:9033
+spring:
+  application:
+    name: sb-mini-kubelet
+
+app:
+  etcd:
+    endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
+    timeout: 5
+    watch-directory: /registry/containers/
+
