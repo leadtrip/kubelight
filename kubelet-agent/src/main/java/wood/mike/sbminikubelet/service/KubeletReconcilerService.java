@@ -13,7 +13,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
-public class KubeletReconcilerService implements CommandLineRunner {
+public class KubeletReconcilerService {
 
     private final Client client;
     private final ContainerService dockerService;
@@ -29,11 +29,6 @@ public class KubeletReconcilerService implements CommandLineRunner {
         this.client = Client.builder()
                 .endpoints(endpoints)
                 .build();
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        startReconciliationLoop();
     }
 
     public void startReconciliationLoop() {

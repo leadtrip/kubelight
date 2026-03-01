@@ -1,11 +1,14 @@
 package wood.mike.sbetcd.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.options.WatchOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
+import wood.mike.ContainerSpec;
 import wood.mike.sbetcd.exception.EtcdOperationException;
 
 import java.util.concurrent.ExecutionException;
@@ -19,38 +22,43 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class EtcdService {
 
     private final Long timeout;
-
     private final Client client;
+    private final ObjectMapper objectMapper;
 
     public EtcdService(
             @Value("${app.etcd.endpoints}") String endpoints,
-            @Value("${app.etcd.timeout:5}") Long timeout
+            @Value("${app.etcd.timeout:5}") Long timeout, ObjectMapper objectMapper
     ) {
         log.info("Etcd service initializing client, endpoints: {}, timeout: {}", endpoints, timeout);
+        this.objectMapper = objectMapper;
         this.timeout = timeout;
         this.client = Client.builder()
                 .endpoints(endpoints)
                 .build();
     }
 
-    public void put(String key, String value) {
+    public void put(String key, ContainerSpec value) {
         try {
+            String json = objectMapper.writeValueAsString(value);
+
             client.getKVClient()
-                    .put(ByteSequence.from(key, UTF_8), ByteSequence.from(value, UTF_8))
+                    .put(ByteSequence.from(key, UTF_8), ByteSequence.from(json, UTF_8))
                     .get(timeout, TimeUnit.SECONDS);
+
+            log.info("Successfully persisted spec for: {}", key);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new EtcdOperationException("Failed to put key: " + key, e);
         }
     }
 
-    public String get(String key) {
+    public ContainerSpec get(String key) {
         try {
             var response = client.getKVClient()
                     .get(ByteSequence.from(key, UTF_8))
                     .get(timeout, TimeUnit.SECONDS);
 
             if (response.getKvs().isEmpty()) return null;
-            return response.getKvs().getFirst().getValue().toString(UTF_8);
+            return objectMapper.readValue(response.getKvs().getFirst().getValue().getBytes(), ContainerSpec.class);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new EtcdOperationException("Failed to get key: " + key, e);
         }
@@ -64,7 +72,7 @@ public class EtcdService {
         }
     }
 
-    public boolean watch(String  key) {
+    public boolean watch(String key) {
         client.getWatchClient().watch(ByteSequence.from(key, UTF_8),
                 WatchOption.builder().withPrevKV(true).build(),
                 response -> {

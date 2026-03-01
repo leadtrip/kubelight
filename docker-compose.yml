@@ -1,7 +1,7 @@
 services:
   etcd:
     image: quay.io/coreos/etcd:v3.5.0
-    container_name: etcd-server
+    container_name: kubelight-etcd-server
     command:
       - /usr/local/bin/etcd
       - --name=s1
@@ -13,11 +13,11 @@ services:
       - --initial-cluster=s1=http://etcd:2380
       - --initial-cluster-state=new
     networks:
-      - etcd-net
+      - kubelight-net
 
-  app:
-    build: .
-    container_name: spring-etcd-app
+  manager-api:
+    build: ./manager-api
+    container_name: manager-api
     ports:
       - "9220:9220"
     environment:
@@ -25,8 +25,21 @@ services:
     depends_on:
       - etcd
     networks:
-      - etcd-net
+      - kubelight-net
+
+  kubelet-agent:
+    build: ./kubelet-agent
+    container_name: kubelet-agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    environment:
+      - ETCD_ENDPOINTS=http://etcd:2379
+    depends_on:
+      - etcd
+    networks:
+      - kubelight-net
 
 networks:
-  etcd-net:
+  kubelight-net:
     driver: bridge

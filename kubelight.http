@@ -1,63 +1,50 @@
-POST {{api_endpoint}}/api/checkpoints
+### Deploy Nginx
+POST {{api_endpoint}}/api/put
 Accept: application/json
 Content-Type: application/json
 
 {
-  "courseId": "C1",
-  "athleteId": "A987",
-  "checkpointName": "CP2",
-  "timestamp": "2025-10-15T11:16:42Z",
-  "courseDistance": 10000
+  "key": "/registry/containers/web-server",
+  "value": {
+    "name": "web-server",
+    "image": "nginx:latest",
+    "hostPort": 8081,
+    "containerPort": 80
+  }
+}
+
+### Deploy Redis
+POST {{api_endpoint}}/api/put
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "/registry/containers/cache-db",
+  "value": {
+    "name": "cache-db",
+    "image": "redis:alpine",
+    "hostPort": 6379,
+    "containerPort": 6379
+  }
+}
+
+### Deploy WhoAmI
+POST {{api_endpoint}}/api/put
+Accept: application/json
+Content-Type: application/json
+
+{
+  "key": "/registry/containers/whoami",
+  "value": {
+    "name": "whoami",
+    "image": "traefik:whoami",
+    "hostPort": 8082,
+    "containerPort": 80
+  }
 }
 
 ###
-
-POST {{api_endpoint}}/api/mockrace
-Accept: application/json
-Content-Type: application/json
-
-{
-  "courseId": "C-5K-1",
-  "raceConfig": "FIVE_KM",
-  "startTime": "2025-10-16T08:00:00Z",
-  "totalEntrants": 10
-}
+GET {{api_endpoint}}/api/get?key=/registry/containers/web-server
 
 ###
-
-POST {{api_endpoint}}/api/mockrace
-Accept: application/json
-Content-Type: application/json
-
-{
-  "courseId": "C-10K-1",
-  "raceConfig": "TEN_KM",
-  "startTime": "2025-10-16T08:00:00Z",
-  "totalEntrants": 10
-}
-
-###
-
-POST {{api_endpoint}}/api/mockrace
-Accept: application/json
-Content-Type: application/json
-
-{
-  "courseId": "C-HM-2",
-  "raceConfig": "HALF_MARATHON",
-  "startTime": "2025-10-16T08:00:00Z",
-  "totalEntrants": 10
-}
-
-###
-
-POST {{api_endpoint}}/api/mockrace
-Accept: application/json
-Content-Type: application/json
-
-{
-  "courseId": "C-MA-8",
-  "raceConfig": "MARATHON",
-  "startTime": "2025-10-16T12:00:00Z",
-  "totalEntrants": 10
-}
+GET {{api_endpoint}}/api/delete

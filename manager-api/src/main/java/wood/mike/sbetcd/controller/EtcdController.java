@@ -2,6 +2,7 @@ package wood.mike.sbetcd.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import wood.mike.ContainerSpec;
 import wood.mike.sbetcd.model.*;
 import wood.mike.sbetcd.service.EtcdService;
 
@@ -15,29 +16,29 @@ public class EtcdController {
         this.etcdService = etcdService;
     }
 
-    @PostMapping("/put")
+    @PostMapping("/api/put")
     public PutResponse put(@RequestBody PutRequest putRequest) {
         log.info("PutRequest: {}", putRequest);
         etcdService.put(putRequest.key(), putRequest.value());
         return PutResponse.success();
     }
 
-    @GetMapping("/get/{key}")
-    public GetResponse get(@PathVariable String key) {
+    @GetMapping("/api/get")
+    public GetResponse get(@RequestParam String key) {
         log.info("GetRequest: {}", key);
-        String value = etcdService.get(key);
+        ContainerSpec value = etcdService.get(key);
         return GetResponse.success(value);
     }
 
-    @GetMapping("/watch/{key}")
-    public WatchResponse watch(@PathVariable String key) {
+    @GetMapping("/api/watch")
+    public WatchResponse watch(@RequestParam String key) {
         log.info("WatchRequest: {}", key);
         boolean keyExists = etcdService.watch(key);
         return WatchResponse.success(keyExists);
     }
 
-    @GetMapping("/delete/{key}")
-    public DeleteResponse delete(@PathVariable String key) {
+    @GetMapping("/api/delete")
+    public DeleteResponse delete(@RequestParam String key) {
         log.info("DeleteRequest: {}", key);
         etcdService.delete(key);
         return DeleteResponse.success();

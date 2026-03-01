@@ -1,5 +1,7 @@
 package wood.mike.sbetcd.model;
 
-public record GetResponse (String message, String value) {
-    public static GetResponse success(String value) { return new GetResponse("success", value); }
+import wood.mike.ContainerSpec;
+
+public record GetResponse (String message, ContainerSpec value) {
+    public static GetResponse success(ContainerSpec value) { return new GetResponse("success", value); }
 }
