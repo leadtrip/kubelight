@@ -54,7 +54,6 @@ public class KubeletReconcilerService implements CommandLineRunner {
                     .get();
 
             Set<String> desiredContainerNames = new HashSet<>();
-            log.info("Ensure these containers are running {}", desiredContainerNames);
 
             for (KeyValue kv : response.getKvs()) {
                 ContainerSpec spec = objectMapper.readValue(kv.getValue().getBytes(), ContainerSpec.class);

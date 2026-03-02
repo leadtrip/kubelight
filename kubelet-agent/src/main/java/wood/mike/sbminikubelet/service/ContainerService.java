@@ -83,6 +83,10 @@ public class ContainerService {
         createAndStart(spec);
     }
 
+    /**
+     * Remove any containers that are labeled but aren't in the given list
+     * @param desiredNames  - the list of container names that should be running
+     */
     public void removeOrphans(Set<String> desiredNames) {
         List<Container> allContainers = dockerClient.listContainersCmd()
                 .withShowAll(true)
