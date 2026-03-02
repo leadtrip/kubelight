@@ -37,14 +37,25 @@ Content-Type: application/json
   "key": "/registry/containers/whoami",
   "value": {
     "name": "whoami",
-    "image": "traefik:whoami",
+    "image": "traefik/whoami",
     "hostPort": 8082,
     "containerPort": 80
   }
 }
 
+### GET
+GET {{api_endpoint}}/api/get?key=/registry/containers/
 ###
 GET {{api_endpoint}}/api/get?key=/registry/containers/web-server
-
 ###
-GET {{api_endpoint}}/api/delete
+GET {{api_endpoint}}/api/get?key=/registry/containers/cache-db
+###
+GET {{api_endpoint}}/api/get?key=/registry/containers/whoami
+
+
+### DELETE
+GET {{api_endpoint}}/api/delete?key=/registry/containers/web-server
+###
+GET {{api_endpoint}}/api/delete?key=/registry/containers/cache-db
+###
+GET {{api_endpoint}}/api/delete?key=/registry/containers/whoami
