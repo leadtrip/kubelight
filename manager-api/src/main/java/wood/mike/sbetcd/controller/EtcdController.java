@@ -2,7 +2,7 @@ package wood.mike.sbetcd.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import wood.mike.ContainerSpec;
+import wood.mike.model.ContainerSpec;
 import wood.mike.sbetcd.model.*;
 import wood.mike.sbetcd.service.EtcdService;
 
@@ -28,13 +28,6 @@ public class EtcdController {
         log.info("GetRequest: {}", key);
         ContainerSpec value = etcdService.get(key);
         return GetResponse.success(value);
-    }
-
-    @GetMapping("/api/watch")
-    public WatchResponse watch(@RequestParam String key) {
-        log.info("WatchRequest: {}", key);
-        boolean keyExists = etcdService.watch(key);
-        return WatchResponse.success(keyExists);
     }
 
     @GetMapping("/api/delete")

@@ -2,10 +2,13 @@ package wood.mike.sbminikubelet.service;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
+import com.github.dockerjava.api.model.Ports;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import wood.mike.model.ContainerSpec;
 
 @Service
 public class ContainerService {
@@ -17,15 +20,17 @@ public class ContainerService {
     }
 
     @SneakyThrows
-    public String deployContainer(String imageName, String containerName) {
-        dockerClient.pullImageCmd(imageName)
+    public String deployContainer(final ContainerSpec containerSpec) {
+        dockerClient.pullImageCmd(containerSpec.image())
                 .start()
                 .awaitCompletion();
 
-        CreateContainerResponse container = dockerClient.createContainerCmd(imageName)
-                .withName(containerName)
-                .withHostConfig(HostConfig.newHostConfig()
-                        .withPortBindings(PortBinding.parse("8081:80"))) // Map 8081 -> 80
+        CreateContainerResponse container = dockerClient.createContainerCmd(containerSpec.image())
+                .withName(containerSpec.name())
+                .withHostConfig(HostConfig.newHostConfig().withPortBindings()
+                        .withPortBindings(
+                                new PortBinding(Ports.Binding.bindPort(containerSpec.hostPort()), ExposedPort.tcp(containerSpec.containerPort())))
+                )
                 .exec();
 
         dockerClient.startContainerCmd(container.getId()).exec();

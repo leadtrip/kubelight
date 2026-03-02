@@ -7,6 +7,7 @@ dependencies {
     implementation project(':common')
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'io.etcd:jetcd-core:0.8.6'
     testImplementation 'io.etcd:jetcd-test:0.8.6'

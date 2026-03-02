@@ -1,11 +1,12 @@
 package wood.mike.sbetcd.unit.service;
 
+import io.etcd.jetcd.Client;
 import io.etcd.jetcd.test.EtcdClusterExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import tools.jackson.databind.ObjectMapper;
-import wood.mike.ContainerSpec;
+import wood.mike.model.ContainerSpec;
 import wood.mike.sbetcd.service.EtcdService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,8 @@ public class EtcdServiceTest {
     @BeforeEach
     void setUp() {
         String endpoint = cluster.clientEndpoints().get(0).toString();
-        etcdService = new EtcdService(endpoint, 5L, new ObjectMapper());
+        Client client = Client.builder().endpoints(endpoint).build();
+        etcdService = new EtcdService(client, 5L, new ObjectMapper());
     }
 
     @Test

@@ -8,5 +8,5 @@ app:
   etcd:
     endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
     timeout: 5
-    watch-directory: /registry/containers/
+    watch-directory: ${WATCH_DIRECTORY:/registry/containers/}
 

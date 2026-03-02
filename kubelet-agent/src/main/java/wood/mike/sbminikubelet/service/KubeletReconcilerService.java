@@ -6,8 +6,9 @@ import io.etcd.jetcd.options.WatchOption;
 import io.etcd.jetcd.watch.WatchEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
+import wood.mike.model.ContainerSpec;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -16,19 +17,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class KubeletReconcilerService {
 
     private final Client client;
-    private final ContainerService dockerService;
+    private final ContainerService containerService;
     private final String watchDirectory;
+    private final ObjectMapper objectMapper;
 
     public KubeletReconcilerService(
-            @Value("${app.etcd.endpoints}") String endpoints,
+            Client client,
             @Value("${app.etcd.watch-directory}") String watchDirectory,
-            ContainerService dockerService) {
-        log.info("Initializing client, endpoints: {}", endpoints);
-        this.dockerService = dockerService;
+            ContainerService containerService,
+            ObjectMapper objectMapper) {
+        this.containerService = containerService;
         this.watchDirectory = watchDirectory;
-        this.client = Client.builder()
-                .endpoints(endpoints)
-                .build();
+        this.objectMapper = objectMapper;
+        this.client = client;
     }
 
     public void startReconciliationLoop() {
@@ -37,10 +38,10 @@ public class KubeletReconcilerService {
                 WatchOption.builder().isPrefix(true).build(),
                 response -> {
                     for (WatchEvent event : response.getEvents()) {
-                        // 1. Get the Key and the JSON Value
                         log.info(event.toString());
-                        // 2. Map JSON to ContainerSpec.class
-                        // 3. Call Docker API to Create/Delete
+                        ContainerSpec containerSpec = objectMapper.readValue(event.getKeyValue().getValue().getBytes(), ContainerSpec.class);
+                        String containerId = containerService.deployContainer(containerSpec);
+                        log.info("Successfully deployed: {} container with id: {}", containerSpec.name(), containerId);
                     }
                 }
         );

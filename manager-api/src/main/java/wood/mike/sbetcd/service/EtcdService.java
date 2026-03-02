@@ -1,14 +1,12 @@
 package wood.mike.sbetcd.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
-import io.etcd.jetcd.options.WatchOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
-import wood.mike.ContainerSpec;
+import wood.mike.model.ContainerSpec;
 import wood.mike.sbetcd.exception.EtcdOperationException;
 
 import java.util.concurrent.ExecutionException;
@@ -26,15 +24,13 @@ public class EtcdService {
     private final ObjectMapper objectMapper;
 
     public EtcdService(
-            @Value("${app.etcd.endpoints}") String endpoints,
-            @Value("${app.etcd.timeout:5}") Long timeout, ObjectMapper objectMapper
+            Client client,
+            @Value("${app.etcd.timeout:5}") Long timeout,
+            ObjectMapper objectMapper
     ) {
-        log.info("Etcd service initializing client, endpoints: {}, timeout: {}", endpoints, timeout);
         this.objectMapper = objectMapper;
         this.timeout = timeout;
-        this.client = Client.builder()
-                .endpoints(endpoints)
-                .build();
+        this.client = client;
     }
 
     public void put(String key, ContainerSpec value) {
@@ -72,15 +68,4 @@ public class EtcdService {
         }
     }
 
-    public boolean watch(String key) {
-        client.getWatchClient().watch(ByteSequence.from(key, UTF_8),
-                WatchOption.builder().withPrevKV(true).build(),
-                response -> {
-                    response.getEvents().forEach(event -> {
-                        log.info("Key: {} changed from: {}, to: {} after: {} event",
-                                event.getKeyValue().getKey(), event.getPrevKV().getValue(), event.getKeyValue().getValue(), event.getEventType());
-                    });
-                });
-        return get(key) != null;
-    }
 }

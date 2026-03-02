@@ -10,7 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import wood.mike.sbminikubelet.service.KubeletReconcilerService;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"wood.mike"})
 public class SbMiniKubeletApplication implements CommandLineRunner {
 
     @Autowired
