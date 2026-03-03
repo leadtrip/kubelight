@@ -49,24 +49,24 @@ public class EtcdControllerIT {
         ContainerSpec containerSpec = new ContainerSpec("nginx", "nginx:latest", 8080, 80);
         KlPutRequest request = new KlPutRequest("nginx", containerSpec);
 
-        mockMvc.perform(post("/put")
+        mockMvc.perform(post("/api/put")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("message", is("success")));
 
         mockMvc.perform(get
-                        ("/get/nginx"))
+                        ("/api/get?key=nginx"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.value", is("pixel")))
+                .andExpect(jsonPath("$.value.name", is("nginx")))
                 .andExpect(jsonPath("$.message", is("success")));
 
-        mockMvc.perform(get("/delete/nginx"))
+        mockMvc.perform(get("/api/delete?key=nginx"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is("success")));
 
         mockMvc.perform(get
-                        ("/get/nginx"))
+                        ("/api/get?key=nginx"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is(nullValue())))
                 .andExpect(jsonPath("$.message", is("success")));
