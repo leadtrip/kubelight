@@ -51,7 +51,7 @@ GET {{api_endpoint}}/api/get?key=/registry/containers/cache-db
 GET {{api_endpoint}}/api/get?key=/registry/containers/whoami
 
 
-### GET
+### GET desired spec and current state
 GET {{api_endpoint}}/api/containers
 
 
