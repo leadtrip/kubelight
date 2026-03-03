@@ -5,9 +5,12 @@ spring:
     name: sb-mini-kubelet
 
 app:
+  node-name: ${NODE_NAME:default-node}
   etcd:
-   endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
-   container-prefix: "/registry/containers/"
-   status-prefix: "/registry/status/nodes/"
-   timeout-seconds: 5
+    endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
+    container-prefix: "/registry/containers/specs/"
+    container-status-prefix: "/registry/containers/status/"
+    node-status-prefix: "/registry/nodes/status/"
+    timeout-seconds: 5
+    lease-ttl-seconds: 5
 

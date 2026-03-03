@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record EtcdProperties(
         String endpoints,
         String containerPrefix,
-        String statusPrefix,
-        Long timeoutSeconds
+        String containerStatusPrefix,
+        String nodeStatusPrefix,
+        Long timeoutSeconds,
+        Long leaseTtlSeconds
 ) {}

@@ -6,6 +6,7 @@ import wood.mike.config.EtcdProperties;
 import wood.mike.model.ContainerSpec;
 import wood.mike.model.ContainerStatus;
 import wood.mike.model.FullContainerInfo;
+import wood.mike.model.NodeStatus;
 import wood.mike.sbetcd.model.*;
 import wood.mike.service.EtcdService;
 
@@ -49,10 +50,15 @@ public class EtcdController {
         List<ContainerSpec> specs = etcdService.listPrefix(etcdProperties.containerPrefix(), ContainerSpec.class);
 
         return specs.stream().map(spec -> {
-            ContainerStatus status = etcdService.getValue(etcdProperties.statusPrefix() + spec.name(), ContainerStatus.class)
+            ContainerStatus status = etcdService.getValue(etcdProperties.containerStatusPrefix() + spec.name(), ContainerStatus.class)
                     .orElse(new ContainerStatus(spec.name(), "Unknown", "N/A", "N/A", "N/A"));
 
             return new FullContainerInfo(spec, status);
         }).toList();
+    }
+
+    @GetMapping("/api/nodes")
+    public List<NodeStatus> getAllNodes() {
+        return etcdService.listPrefix(etcdProperties.nodeStatusPrefix(), NodeStatus.class);
     }
 }

@@ -24,7 +24,7 @@ public class EtcdServiceTest {
 
     @BeforeEach
     void setUp() {
-        EtcdProperties etcdProperties = new EtcdProperties("", "", "", 2L);
+        EtcdProperties etcdProperties = new EtcdProperties("", "", "", "", 2L, 5L);
         String endpoint = cluster.clientEndpoints().get(0).toString();
         Client client = Client.builder().endpoints(endpoint).build();
         etcdService = new EtcdService(client, new ObjectMapper(), etcdProperties);

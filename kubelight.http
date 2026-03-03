@@ -4,7 +4,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "key": "/registry/containers/web-server",
+  "key": "/registry/containers/specs/web-server",
   "value": {
     "name": "web-server",
     "image": "nginx:latest",
@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "key": "/registry/containers/cache-db",
+  "key": "/registry/containers/specs/cache-db",
   "value": {
     "name": "cache-db",
     "image": "redis:alpine",
@@ -34,7 +34,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "key": "/registry/containers/whoami",
+  "key": "/registry/containers/specs/whoami",
   "value": {
     "name": "whoami",
     "image": "traefik/whoami",
@@ -44,20 +44,23 @@ Content-Type: application/json
 }
 
 ### GET docker manifests
-GET {{api_endpoint}}/api/get?key=/registry/containers/web-server
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/web-server
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/cache-db
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/cache-db
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/whoami
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/whoami
 
 
 ### GET desired spec and current state
 GET {{api_endpoint}}/api/containers
 
+### GET the node/heartbeat info
+GET {{api_endpoint}}/api/nodes
+
 
 ### DELETE docker manifests
-GET {{api_endpoint}}/api/delete?key=/registry/containers/web-server
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/web-server
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/cache-db
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/cache-db
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/whoami
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/whoami

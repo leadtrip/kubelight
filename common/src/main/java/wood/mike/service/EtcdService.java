@@ -4,16 +4,19 @@ import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.kv.GetResponse;
+import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
 import io.etcd.jetcd.options.GetOption;
+import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.options.WatchOption;
 import io.etcd.jetcd.watch.WatchResponse;
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 import wood.mike.config.EtcdProperties;
 import wood.mike.exception.EtcdOperationException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +57,47 @@ public class EtcdService {
             log.info("Successfully persisted key: {}", key);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new EtcdOperationException("Failed to put key: " + key, e);
+        }
+    }
+
+    /**
+     * Add an entry with a lease of the given number of seconds.
+     * Etcd will receive periodic pings ensuring it keeps the entry. After each ping a countdown
+     * starts of the number of lease seconds, if this hits zero (basically the app is dead) the entry is removed by etcd
+     * @param key           - the key
+     * @param value         - the value
+     * @param ttlSeconds    - the number of seconds to keep the entry in etcd after a ping from the app
+     */
+    public void putWithLease(String key, Object value, long ttlSeconds) {
+        try {
+            long leaseId = client.getLeaseClient().grant(ttlSeconds).get().getID();
+
+            log.info("Putting key {} with lease {}", key, ttlSeconds);
+
+            client.getLeaseClient().keepAlive(leaseId, new StreamObserver<>() {
+                @Override
+                public void onNext(LeaseKeepAliveResponse r) {
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                }
+
+                @Override
+                public void onCompleted() {
+                }
+            });
+
+            String json = objectMapper.writeValueAsString(value);
+            log.info("Persisting with lease {}", json);
+            client.getKVClient().put(
+                    ByteSequence.from(key, StandardCharsets.UTF_8),
+                    ByteSequence.from(json, StandardCharsets.UTF_8),
+                    PutOption.builder().withLeaseId(leaseId).build()
+            ).get();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to put with lease", e);
         }
     }
 
@@ -107,9 +151,7 @@ public class EtcdService {
                     .get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
 
             return response.getKvs().stream()
-                    .map(kv -> {
-                        return objectMapper.readValue(kv.getValue().getBytes(), clazz);
-                    })
+                    .map(kv -> objectMapper.readValue(kv.getValue().getBytes(), clazz))
                     .filter(Objects::nonNull)
                     .toList();
         } catch (Exception e) {

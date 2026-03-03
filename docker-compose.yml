@@ -35,6 +35,7 @@ services:
     user: root
     environment:
       - ETCD_ENDPOINTS=http://etcd:2379
+      - NODE_NAME=node-1
     depends_on:
       - etcd
     networks:

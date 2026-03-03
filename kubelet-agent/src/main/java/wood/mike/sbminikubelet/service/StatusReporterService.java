@@ -48,7 +48,7 @@ public class StatusReporterService {
                     LocalDateTime.now().toString()
             );
 
-            String statusKey = etcdProperties.statusPrefix() + name;
+            String statusKey = etcdProperties.containerStatusPrefix() + name;
             etcdService.put(statusKey, status);
         }
     }
