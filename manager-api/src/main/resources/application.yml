@@ -7,4 +7,6 @@ spring:
 app:
   etcd:
     endpoints: ${ETCD_ENDPOINTS:http://localhost:2379}
-    timeout: 5
+    container-prefix: "/registry/containers/"
+    status-prefix: "/registry/status/nodes/"
+    timeout-seconds: 5

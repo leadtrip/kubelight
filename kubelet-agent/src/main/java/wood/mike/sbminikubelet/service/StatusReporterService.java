@@ -5,6 +5,7 @@ import com.github.dockerjava.api.model.Container;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import wood.mike.config.EtcdProperties;
 import wood.mike.model.ContainerStatus;
 import wood.mike.sbminikubelet.config.AppConstants;
 import wood.mike.service.EtcdService;
@@ -19,10 +20,12 @@ public class StatusReporterService {
 
     private final DockerClient dockerClient;
     private final EtcdService etcdService;
+    private final EtcdProperties etcdProperties;
 
-    public StatusReporterService(DockerClient dockerClient, EtcdService etcdService) {
+    public StatusReporterService(DockerClient dockerClient, EtcdService etcdService, EtcdProperties etcdProperties) {
         this.dockerClient = dockerClient;
         this.etcdService = etcdService;
+        this.etcdProperties = etcdProperties;
     }
 
     @Scheduled(fixedRate = 10000)
@@ -45,7 +48,7 @@ public class StatusReporterService {
                     LocalDateTime.now().toString()
             );
 
-            String statusKey = "/registry/status/" + name;
+            String statusKey = etcdProperties.statusPrefix() + name;
             etcdService.put(statusKey, status);
         }
     }

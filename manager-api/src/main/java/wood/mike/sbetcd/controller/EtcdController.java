@@ -2,6 +2,7 @@ package wood.mike.sbetcd.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import wood.mike.config.EtcdProperties;
 import wood.mike.model.ContainerSpec;
 import wood.mike.model.ContainerStatus;
 import wood.mike.model.FullContainerInfo;
@@ -15,9 +16,11 @@ import java.util.List;
 public class EtcdController {
 
     private final EtcdService etcdService;
+    private final EtcdProperties etcdProperties;
 
-    public EtcdController(EtcdService etcdService) {
+    public EtcdController(EtcdService etcdService, EtcdProperties etcdProperties) {
         this.etcdService = etcdService;
+        this.etcdProperties = etcdProperties;
     }
 
     @PostMapping("/api/put")
@@ -43,10 +46,10 @@ public class EtcdController {
 
     @GetMapping("/api/containers")
     public List<FullContainerInfo> getAllContainers() {
-        List<ContainerSpec> specs = etcdService.listPrefix("/registry/containers/", ContainerSpec.class);
+        List<ContainerSpec> specs = etcdService.listPrefix(etcdProperties.containerPrefix(), ContainerSpec.class);
 
         return specs.stream().map(spec -> {
-            ContainerStatus status = etcdService.getValue("/registry/status/" + spec.name(), ContainerStatus.class)
+            ContainerStatus status = etcdService.getValue(etcdProperties.statusPrefix() + spec.name(), ContainerStatus.class)
                     .orElse(new ContainerStatus(spec.name(), "Unknown", "N/A", "N/A", "N/A"));
 
             return new FullContainerInfo(spec, status);

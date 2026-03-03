@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
+import wood.mike.config.EtcdProperties;
 import wood.mike.model.ContainerSpec;
 import wood.mike.service.EtcdService;
 
@@ -22,18 +23,18 @@ public class KubeletReconcilerService {
 
     private final EtcdService etcdService;
     private final ContainerService containerService;
-    private final String watchDirectory;
     private final ObjectMapper objectMapper;
+    private final EtcdProperties props;
 
     public KubeletReconcilerService(
             EtcdService etcdService,
-            @Value("${app.etcd.watch-directory}") String watchDirectory,
             ContainerService containerService,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            EtcdProperties props) {
         this.etcdService = etcdService;
         this.containerService = containerService;
-        this.watchDirectory = watchDirectory;
         this.objectMapper = objectMapper;
+        this.props = props;
     }
 
     public void start() {
@@ -45,7 +46,7 @@ public class KubeletReconcilerService {
     public void syncOnBoot() {
         log.info("Starting initial sync from etcd...");
         try {
-            GetResponse response = etcdService.get(watchDirectory, true);
+            GetResponse response = etcdService.get(props.containerPrefix(), true);
 
             Set<String> desiredContainerNames = new HashSet<>();
 
@@ -63,8 +64,8 @@ public class KubeletReconcilerService {
     }
 
     public void startReconciliationLoop() {
-        log.info("Starting watch on {}", watchDirectory);
-        etcdService.watchPrefix(watchDirectory, this::processResponse);
+        log.info("Starting watch on {}", props.containerPrefix());
+        etcdService.watchPrefix(props.containerPrefix(), this::processResponse);
     }
 
     private void processResponse(WatchResponse response) {

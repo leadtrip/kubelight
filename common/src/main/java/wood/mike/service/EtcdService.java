@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
+import wood.mike.config.EtcdProperties;
 import wood.mike.exception.EtcdOperationException;
 
 import java.util.Collections;
@@ -28,18 +29,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Service
 public class EtcdService {
 
-    private final Long timeout;
     private final Client client;
     private final ObjectMapper objectMapper;
+    private final EtcdProperties etcdProperties;
 
     public EtcdService(
             Client client,
-            @Value("${app.etcd.timeout:5}") Long timeout,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            EtcdProperties etcdProperties
     ) {
         this.objectMapper = objectMapper;
-        this.timeout = timeout;
         this.client = client;
+        this.etcdProperties = etcdProperties;
     }
 
     public <T> void put(String key, T value) {
@@ -48,7 +49,7 @@ public class EtcdService {
 
             client.getKVClient()
                     .put(ByteSequence.from(key, UTF_8), ByteSequence.from(data))
-                    .get(timeout, TimeUnit.SECONDS);
+                    .get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
 
             log.info("Successfully persisted key: {}", key);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -60,7 +61,7 @@ public class EtcdService {
         try {
             var response = client.getKVClient()
                     .get(ByteSequence.from(key, UTF_8))
-                    .get(timeout, TimeUnit.SECONDS);
+                    .get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
             if (response.getKvs().isEmpty()) return Optional.empty();
 
             return Optional.of(objectMapper.readValue(response.getKvs().getFirst().getValue().getBytes(), clazz));
@@ -78,7 +79,7 @@ public class EtcdService {
 
     public void delete(String key) {
         try {
-            client.getKVClient().delete(ByteSequence.from(key, UTF_8)).get(timeout, TimeUnit.SECONDS);
+            client.getKVClient().delete(ByteSequence.from(key, UTF_8)).get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new EtcdOperationException("Failed to delete key: " + key, e);
         }
@@ -103,7 +104,7 @@ public class EtcdService {
                             ByteSequence.from(prefix, UTF_8),
                             GetOption.builder().isPrefix(true).build()
                     )
-                    .get(timeout, TimeUnit.SECONDS);
+                    .get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
 
             return response.getKvs().stream()
                     .map(kv -> {

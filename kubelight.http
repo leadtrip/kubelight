@@ -44,8 +44,6 @@ Content-Type: application/json
 }
 
 ### GET docker manifests
-GET {{api_endpoint}}/api/get?key=/registry/containers/
-###
 GET {{api_endpoint}}/api/get?key=/registry/containers/web-server
 ###
 GET {{api_endpoint}}/api/get?key=/registry/containers/cache-db

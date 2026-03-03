@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import tools.jackson.databind.ObjectMapper;
+import wood.mike.config.EtcdProperties;
 import wood.mike.model.ContainerSpec;
 import wood.mike.service.EtcdService;
 
@@ -23,13 +24,14 @@ public class EtcdServiceTest {
 
     @BeforeEach
     void setUp() {
+        EtcdProperties etcdProperties = new EtcdProperties("", "", "", 2L);
         String endpoint = cluster.clientEndpoints().get(0).toString();
         Client client = Client.builder().endpoints(endpoint).build();
-        etcdService = new EtcdService(client, 5L, new ObjectMapper());
+        etcdService = new EtcdService(client, new ObjectMapper(), etcdProperties);
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAll() {
         ContainerSpec nginx = new ContainerSpec("web-server", "nginx:latest", 8081, 80);
         final String key = "nginx";
         etcdService.put(key, nginx);
