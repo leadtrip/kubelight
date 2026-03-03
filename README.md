@@ -32,9 +32,9 @@ http://localhost:9220/put
 # get value for key
 curl http://localhost:9220/get?key=/registry/containers/web-server
 
-# watch value for key - logs new/previous values when changed with put or delete
-curl http://localhost:9220/watch?key=/registry/containers/web-server
-
 # delete key/value pair for given key
 curl http://localhost:9220/delete?key=/registry/containers/web-server
+
+# get desired container specification and actual state, similar to kubectl get pods
+curl http://localhost:9220/api/containers
 ```
