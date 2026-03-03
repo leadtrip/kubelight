@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import tools.jackson.databind.ObjectMapper;
 import wood.mike.model.ContainerSpec;
-import wood.mike.sbetcd.service.EtcdService;
+import wood.mike.service.EtcdService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,11 +33,12 @@ public class EtcdServiceTest {
         ContainerSpec nginx = new ContainerSpec("web-server", "nginx:latest", 8081, 80);
         final String key = "nginx";
         etcdService.put(key, nginx);
-        assertEquals(nginx.name(), etcdService.get(key).name());
-        assertEquals(nginx.image(), etcdService.get(key).image());
-        assertEquals(nginx.hostPort(), etcdService.get(key).hostPort());
-        assertEquals(nginx.containerPort(), etcdService.get(key).containerPort());
+        ContainerSpec containerSpec = etcdService.getValue(key, ContainerSpec.class).orElseThrow();
+        assertEquals(nginx.name(), containerSpec.name());
+        assertEquals(nginx.image(), containerSpec.image());
+        assertEquals(nginx.hostPort(), containerSpec.hostPort());
+        assertEquals(nginx.containerPort(), containerSpec.containerPort());
         etcdService.delete(key);
-        assertNull(etcdService.get(key));
+        assertNull(etcdService.getValue(key, ContainerSpec.class));
     }
 }

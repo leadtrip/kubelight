@@ -5,9 +5,12 @@ plugins {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'io.etcd:jetcd-core:0.8.6'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compileOnly "org.projectlombok:lombok:1.18.42"
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 }
 
 tasks.named('test') {

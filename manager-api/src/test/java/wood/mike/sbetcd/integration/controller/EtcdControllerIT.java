@@ -11,7 +11,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
-import wood.mike.sbetcd.model.PutRequest;
+import wood.mike.model.ContainerSpec;
+import wood.mike.sbetcd.model.KlPutRequest;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +46,8 @@ public class EtcdControllerIT {
 
     @Test
     public void testPutAndGetFlow() throws Exception {
-        PutRequest request = new PutRequest("phone", "pixel");
+        ContainerSpec containerSpec = new ContainerSpec("nginx", "nginx:latest", 8080, 80);
+        KlPutRequest request = new KlPutRequest("nginx", containerSpec);
 
         mockMvc.perform(post("/put")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,17 +56,17 @@ public class EtcdControllerIT {
                 .andExpect(jsonPath("message", is("success")));
 
         mockMvc.perform(get
-                        ("/get/phone"))
+                        ("/get/nginx"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is("pixel")))
                 .andExpect(jsonPath("$.message", is("success")));
 
-        mockMvc.perform(get("/delete/phone"))
+        mockMvc.perform(get("/delete/nginx"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is("success")));
 
         mockMvc.perform(get
-                        ("/get/phone"))
+                        ("/get/nginx"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is(nullValue())))
                 .andExpect(jsonPath("$.message", is("success")));

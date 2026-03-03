@@ -43,7 +43,7 @@ Content-Type: application/json
   }
 }
 
-### GET
+### GET docker manifests
 GET {{api_endpoint}}/api/get?key=/registry/containers/
 ###
 GET {{api_endpoint}}/api/get?key=/registry/containers/web-server
@@ -53,7 +53,11 @@ GET {{api_endpoint}}/api/get?key=/registry/containers/cache-db
 GET {{api_endpoint}}/api/get?key=/registry/containers/whoami
 
 
-### DELETE
+### GET
+GET {{api_endpoint}}/api/containers
+
+
+### DELETE docker manifests
 GET {{api_endpoint}}/api/delete?key=/registry/containers/web-server
 ###
 GET {{api_endpoint}}/api/delete?key=/registry/containers/cache-db

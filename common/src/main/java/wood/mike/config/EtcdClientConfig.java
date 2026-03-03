@@ -4,6 +4,7 @@ import io.etcd.jetcd.Client;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 public class EtcdClientConfig {
@@ -13,5 +14,10 @@ public class EtcdClientConfig {
         return Client.builder()
                 .endpoints(endpoints)
                 .build();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }
