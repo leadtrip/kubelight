@@ -1,4 +1,4 @@
-package wood.mike.sbetcd.unit.service;
+package wood.mike.common.unit.service;
 
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.test.EtcdClusterExtension;
@@ -9,8 +9,8 @@ import tools.jackson.databind.ObjectMapper;
 import wood.mike.model.ContainerSpec;
 import wood.mike.service.EtcdService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EtcdServiceTest {
 
@@ -39,6 +39,6 @@ public class EtcdServiceTest {
         assertEquals(nginx.hostPort(), containerSpec.hostPort());
         assertEquals(nginx.containerPort(), containerSpec.containerPort());
         etcdService.delete(key);
-        assertNull(etcdService.getValue(key, ContainerSpec.class));
+        assertTrue(etcdService.getValue(key, ContainerSpec.class).isEmpty());
     }
 }
