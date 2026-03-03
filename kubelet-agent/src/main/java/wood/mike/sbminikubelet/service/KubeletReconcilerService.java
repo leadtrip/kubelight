@@ -6,7 +6,6 @@ import io.etcd.jetcd.watch.WatchEvent;
 import io.etcd.jetcd.watch.WatchResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 import wood.mike.model.ContainerSpec;
@@ -19,7 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Service
-public class KubeletReconcilerService implements CommandLineRunner {
+public class KubeletReconcilerService {
 
     private final EtcdService etcdService;
     private final ContainerService containerService;
@@ -37,8 +36,8 @@ public class KubeletReconcilerService implements CommandLineRunner {
         this.objectMapper = objectMapper;
     }
 
-    @Override
-    public void run(String... args) {
+    public void start() {
+        log.info("Starting Kubelet initialization...");
         syncOnBoot();
         startReconciliationLoop();
     }
