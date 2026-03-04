@@ -47,7 +47,7 @@ public class EtcdControllerIT {
     @Test
     public void testPutAndGetFlow() throws Exception {
         ContainerSpec containerSpec = new ContainerSpec("nginx", "nginx:latest", 8080, 80);
-        KlPutRequest request = new KlPutRequest("nginx", containerSpec);
+        KlPutRequest request = new KlPutRequest( containerSpec);
 
         mockMvc.perform(post("/api/put")
                         .contentType(MediaType.APPLICATION_JSON)

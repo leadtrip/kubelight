@@ -2,6 +2,7 @@ package wood.mike.service;
 
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
+import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
@@ -156,6 +157,25 @@ public class EtcdService {
                     .toList();
         } catch (Exception e) {
             log.error("Failed to list prefix: {}", prefix, e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<String> listKeys(String prefix) {
+        try {
+            var response = client.getKVClient()
+                    .get(
+                            ByteSequence.from(prefix, UTF_8),
+                            GetOption.builder().isPrefix(true).build()
+                    )
+                    .get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
+
+            return response.getKvs().stream()
+                    .map(kv -> kv.getKey().toString())
+                    .filter(Objects::nonNull)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Failed to list keys for prefix: {}", prefix, e);
             return Collections.emptyList();
         }
     }

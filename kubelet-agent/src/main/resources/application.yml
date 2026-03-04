@@ -12,5 +12,5 @@ app:
     container-status-prefix: "/registry/containers/status/"
     node-status-prefix: "/registry/nodes/status/"
     timeout-seconds: 5
-    lease-ttl-seconds: 5
+    lease-ttl-seconds: 30
 

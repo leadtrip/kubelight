@@ -24,17 +24,18 @@ public class KubeletReconcilerService {
     private final EtcdService etcdService;
     private final ContainerService containerService;
     private final ObjectMapper objectMapper;
-    private final EtcdProperties props;
+    private final String myAssignmentPrefix;
 
     public KubeletReconcilerService(
             EtcdService etcdService,
             ContainerService containerService,
             ObjectMapper objectMapper,
-            EtcdProperties props) {
+            EtcdProperties props,
+            @Value("${app.node-name}") String nodeName) {
         this.etcdService = etcdService;
         this.containerService = containerService;
         this.objectMapper = objectMapper;
-        this.props = props;
+        this.myAssignmentPrefix = props.containerPrefix() + nodeName + "/";
     }
 
     public void start() {
@@ -46,7 +47,7 @@ public class KubeletReconcilerService {
     public void syncOnBoot() {
         log.info("Starting initial sync from etcd...");
         try {
-            GetResponse response = etcdService.get(props.containerPrefix(), true);
+            GetResponse response = etcdService.get(myAssignmentPrefix, true);
 
             Set<String> desiredContainerNames = new HashSet<>();
 
@@ -64,8 +65,8 @@ public class KubeletReconcilerService {
     }
 
     public void startReconciliationLoop() {
-        log.info("Starting watch on {}", props.containerPrefix());
-        etcdService.watchPrefix(props.containerPrefix(), this::processResponse);
+        log.info("Starting watch on {}", myAssignmentPrefix);
+        etcdService.watchPrefix(myAssignmentPrefix, this::processResponse);
     }
 
     private void processResponse(WatchResponse response) {
