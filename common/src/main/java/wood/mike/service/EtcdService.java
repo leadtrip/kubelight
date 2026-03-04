@@ -179,4 +179,14 @@ public class EtcdService {
             return Collections.emptyList();
         }
     }
+
+    public String extractNodeFromKey(String key) {
+        String prefix = etcdProperties.containerPrefix();
+        if (!key.startsWith(prefix)) return null;
+
+        return key.substring(
+                prefix.length(),
+                key.lastIndexOf('/')
+        );
+    }
 }

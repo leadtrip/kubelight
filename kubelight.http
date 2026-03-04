@@ -67,6 +67,9 @@ GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node}}/whoami
 ### GET desired spec and current state
 GET {{api_endpoint}}/api/containers
 
+### GET containers for nodes
+GET {{api_endpoint}}/api/node/containers
+
 ### GET the node/heartbeat info
 GET {{api_endpoint}}/api/nodes
 

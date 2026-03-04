@@ -3,16 +3,14 @@ package wood.mike.sbetcd.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import wood.mike.config.EtcdProperties;
-import wood.mike.model.ContainerSpec;
-import wood.mike.model.ContainerStatus;
-import wood.mike.model.FullContainerInfo;
-import wood.mike.model.NodeStatus;
+import wood.mike.model.*;
 import wood.mike.sbetcd.model.*;
 import wood.mike.sbetcd.service.SchedulerService;
 import wood.mike.service.EtcdService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +43,19 @@ public class EtcdController {
         return KlGetResponse.success(value);
     }
 
+    @GetMapping("/api/node/containers")
+    public List<NodeContainerInfo> getAllContainersForNode(@RequestParam Optional<String> node) {
+        return etcdService.listKeys(etcdProperties.containerPrefix() + node.orElse(""))
+                .stream()
+                .map(etcdService::extractNodeFromKey)
+                .distinct()
+                .map(n -> {
+                    List<ContainerSpec> containerSpecs = etcdService.listPrefix(etcdProperties.containerPrefix() + n, ContainerSpec.class);
+                    return new NodeContainerInfo(n, containerSpecs);
+                })
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/api/delete")
     public KlDeleteResponse delete(@RequestParam String key) {
         log.info("DeleteRequest: {}", key);
@@ -56,13 +67,9 @@ public class EtcdController {
     public List<FullContainerInfo> getAllContainers() {
         List<ContainerSpec> specs = etcdService.listPrefix(etcdProperties.containerPrefix(), ContainerSpec.class);
 
-        log.info("specs: {}", specs);
-
         Map<String, ContainerStatus> statusMap = etcdService.listPrefix(etcdProperties.containerStatusPrefix(), ContainerStatus.class)
                 .stream()
                 .collect(Collectors.toMap(ContainerStatus::name, s -> s, (existing, replacement) -> replacement));
-
-        log.info("statusMap {}", statusMap);
 
         return specs.stream().map(spec -> {
             ContainerStatus status = statusMap.getOrDefault(spec.name(),

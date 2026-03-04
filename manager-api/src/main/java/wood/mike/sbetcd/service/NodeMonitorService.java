@@ -41,7 +41,7 @@ public class NodeMonitorService {
         List<String> allAssignmentKeys = etcdService.listKeys(etcdProperties.containerPrefix());
 
         for (String key : allAssignmentKeys) {
-            String assignedNode = extractNodeFromKey(key);
+            String assignedNode = etcdService.extractNodeFromKey(key);
 
             if (!activeNodes.contains(assignedNode)) {
                 log.warn("Node {} is DEAD. Rescuing container from key: {}", assignedNode, key);
@@ -53,13 +53,5 @@ public class NodeMonitorService {
         }
     }
 
-    public String extractNodeFromKey(String key) {
-        String prefix = etcdProperties.containerPrefix();
-        if (!key.startsWith(prefix)) return null;
 
-        return key.substring(
-                prefix.length(),
-                key.lastIndexOf('/')
-        );
-    }
 }
