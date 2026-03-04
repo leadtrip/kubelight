@@ -30,8 +30,6 @@ class NodeMonitorServiceTest {
 
     @BeforeEach
     void setup() {
-        // Manually create your record with the test paths
-        // No @Autowired here!
         EtcdProperties etcdProperties = new EtcdProperties(
                 "http://localhost:2379",
                 "/registry/containers/specs/",
@@ -41,8 +39,6 @@ class NodeMonitorServiceTest {
                 20L
         );
 
-        // Manually inject because Mockito's @InjectMocks
-        // sometimes struggles with Records/Constructor injection
         nodeMonitorService = new NodeMonitorService(etcdService, etcdProperties, schedulerService);
     }
 
