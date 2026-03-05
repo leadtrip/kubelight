@@ -2,7 +2,6 @@ package wood.mike.sbminikubelet.unit.service;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.ListContainersCmd;
-import com.github.dockerjava.api.command.SyncDockerCmd;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.core.command.ListContainersCmdImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,6 @@ import wood.mike.model.ContainerStatus;
 import wood.mike.sbminikubelet.service.StatusReporterService;
 import wood.mike.service.EtcdService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -29,15 +27,13 @@ public class StatusReporterServiceTest {
     private DockerClient dockerClient;
     @Mock
     private EtcdService etcdService;
-    private EtcdProperties etcdProperties;
-    private String nodeName = "node-1";
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private StatusReporterService statusReporterService;
 
     @BeforeEach
     public void setUp() {
-        etcdProperties = new EtcdProperties(
+        EtcdProperties etcdProperties = new EtcdProperties(
                 "http://localhost:2379",
                 "/registry/containers/specs/",
                 "/registry/containers/status/",
@@ -46,6 +42,7 @@ public class StatusReporterServiceTest {
                 20L
         );
 
+        String nodeName = "node-1";
         statusReporterService = new StatusReporterService(dockerClient, etcdService, etcdProperties, nodeName);
     }
 
