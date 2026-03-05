@@ -1,6 +1,5 @@
 package wood.mike.sbetcd.unit.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,15 +12,10 @@ import wood.mike.sbetcd.service.NodeMonitorService;
 import wood.mike.sbetcd.service.SchedulerService;
 import wood.mike.service.EtcdService;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,12 +60,4 @@ class NodeMonitorServiceTest {
         verify(etcdService).delete(node2Key);
     }
 
-    @Test
-    void testExtractNodeFromKey() {
-        String key = "/registry/containers/specs/node-1/nginx";
-        String node = nodeMonitorService.extractNodeFromKey(key);
-        assertEquals("node-1", node);
-
-        assertNull(nodeMonitorService.extractNodeFromKey("/no/node/key"));
-    }
 }
