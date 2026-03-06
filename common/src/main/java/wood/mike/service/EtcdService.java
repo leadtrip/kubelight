@@ -125,6 +125,7 @@ public class EtcdService {
     public void delete(String key) {
         try {
             client.getKVClient().delete(ByteSequence.from(key, UTF_8)).get(etcdProperties.timeoutSeconds(), TimeUnit.SECONDS);
+            log.info("Successfully deleted key: {}", key);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new EtcdOperationException("Failed to delete key: " + key, e);
         }

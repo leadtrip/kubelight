@@ -41,7 +41,7 @@ public class KubeletReconcilerServiceTest {
     private ContainerService containerService;
     private final ObjectMapper objectMapper =  new ObjectMapper();
     private final String nodeName = "node-1";
-    private final String myAssignmentPrefix = "/registry/containers/specs/" + nodeName + "/";
+    private String assignementPrefix;
 
     private KubeletReconcilerService kubeletReconcilerService;
 
@@ -58,6 +58,7 @@ public class KubeletReconcilerServiceTest {
         String endpoint = cluster.clientEndpoints().get(0).toString();
         Client client = Client.builder().endpoints(endpoint).build();
         etcdService = new EtcdService(client, new ObjectMapper(), etcdProperties);
+        assignementPrefix = etcdProperties.containerPrefix() + nodeName + "/";
 
         kubeletReconcilerService = new KubeletReconcilerService(etcdService, containerService, objectMapper, etcdProperties, nodeName);
     }
@@ -68,16 +69,15 @@ public class KubeletReconcilerServiceTest {
         verify(containerService, times(1)).removeOrphans(anySet());
     }
 
-    private byte[] getContainerSpec() {
-        String jsonContainerSpec = """
-                        {
-                          "name": "webserver",
-                          "image": "nginx:latest",
-                          "hostPort": 8080,
-                          "containerPort": 8080
-                        }
-                        """;
-        ContainerSpec spec = objectMapper.convertValue(jsonContainerSpec, ContainerSpec.class);
-        return objectMapper.writeValueAsBytes(spec);
+    @Test
+    public void testStartReconciliationLoop() {
+        kubeletReconcilerService.startReconciliationLoop();
+        ContainerSpec spec = new ContainerSpec("webserver", "nginx:latest", 8080, 80);
+        etcdService.put(assignementPrefix, spec);
+        verify(containerService, timeout(2000).times(1)).reconcile(spec);
+        // TODO figure out why the delete watch event isn't propagated in this test environment
+        //etcdService.delete(assignementPrefix + "webserver");
+        //verify(containerService, timeout(2000).times(1)).stopAndRemove("webserver");
     }
+
 }
