@@ -8,6 +8,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
     implementation 'io.etcd:jetcd-core:0.8.6'
     testImplementation 'io.etcd:jetcd-test:0.8.6'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'

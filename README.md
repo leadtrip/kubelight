@@ -18,6 +18,9 @@ creating and destroying docker containers as per the manifests.
 Bring it all up with:\
 `./startup.sh`
 
+* UI (Swagger): http://localhost:9220/swagger-ui.html
+* API Docs (JSON): http://localhost:9220/v3/api-docs
+
 Interact with the manger-api with:
 ```shell
 # add an nginx container 
