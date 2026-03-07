@@ -21,7 +21,7 @@ Bring it all up with:\
 * UI (Swagger): http://localhost:9220/swagger-ui.html
 * API Docs (JSON): http://localhost:9220/v3/api-docs
 
-Interact with the manger-api with:
+Sample curl requests below or use the intellij http client examples [here](kubelight.http)
 ```shell
 # add an nginx container 
 curl -X POST \                       

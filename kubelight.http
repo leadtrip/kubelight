@@ -50,11 +50,11 @@ Content-Type: application/json
 }
 
 ### GET docker manifests
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/web-server
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node2}}/web-server
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/cache-db
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node2}}/cache-db
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/whoami
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node2}}/whoami
 
 
 ### GET desired spec and current state
@@ -70,8 +70,8 @@ GET {{api_endpoint}}/api/nodes
 
 
 ### DELETE docker manifests
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/web-server
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node2}}/web-server2
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/cache-db
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node2}}/cache-db
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/whoami
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node2}}/whoami
