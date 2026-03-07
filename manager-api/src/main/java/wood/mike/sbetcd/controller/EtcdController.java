@@ -1,6 +1,7 @@
 package wood.mike.sbetcd.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import wood.mike.config.EtcdProperties;
 import wood.mike.model.*;
@@ -30,9 +31,9 @@ public class EtcdController {
     }
 
     @PostMapping("/api/put")
-    public KlPutResponse put(@RequestBody KlPutRequest putRequest) {
-        log.info("PutRequest: {}", putRequest);
-        schedulerService.scheduleContainer(putRequest.value());
+    public KlPutResponse put(@Validated @RequestBody ContainerSpec spec) {
+        log.info("PutRequest: {}", spec);
+        schedulerService.scheduleContainer(spec);
         return KlPutResponse.success();
     }
 

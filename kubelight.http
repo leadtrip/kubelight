@@ -1,4 +1,5 @@
-@node = node-1
+@node1 = node-1
+@node2 = node-2
 
 ### Deploy Nginx
 POST {{api_endpoint}}/api/put
@@ -6,12 +7,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "value": {
     "name": "web-server",
     "image": "nginx:latest",
     "hostPort": 8081,
     "containerPort": 80
-  }
 }
 
 ### Deploy Nginx 2
@@ -20,12 +19,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "value": {
     "name": "web-server2",
     "image": "nginx:latest",
     "hostPort": 8083,
     "containerPort": 80
-  }
 }
 
 ### Deploy Redis
@@ -34,12 +31,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "value": {
     "name": "cache-db",
     "image": "redis:alpine",
     "hostPort": 6379,
     "containerPort": 6379
-  }
 }
 
 ### Deploy WhoAmI
@@ -48,27 +43,25 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "value": {
     "name": "whoami",
     "image": "traefik/whoami:latest-amd64",
     "hostPort": 8082,
     "containerPort": 80
-  }
 }
 
 ### GET docker manifests
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node}}/web-server
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/web-server
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node}}/cache-db
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/cache-db
 ###
-GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node}}/whoami
+GET {{api_endpoint}}/api/get?key=/registry/containers/specs/{{node1}}/whoami
 
 
 ### GET desired spec and current state
 GET {{api_endpoint}}/api/containers
 
 ### GET containers for given node
-GET {{api_endpoint}}/api/node/containers?node=node-1
+GET {{api_endpoint}}/api/node/containers?node={{node2}}
 ### GET containers for all nodes
 GET {{api_endpoint}}/api/node/containers
 
@@ -77,8 +70,8 @@ GET {{api_endpoint}}/api/nodes
 
 
 ### DELETE docker manifests
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node}}/web-server
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/web-server
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node}}/cache-db
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/cache-db
 ###
-GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node}}/whoami
+GET {{api_endpoint}}/api/delete?key=/registry/containers/specs/{{node1}}/whoami

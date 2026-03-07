@@ -1,6 +1,6 @@
 ## spring boot kube light
 
-A collection of apps that mimic some kubernetes behavior
+A collection of apps that mimic some kubernetes behavior.
 
 ### etcd server
 Most of the functionality is centered around etcd, both services interact with it which differs
